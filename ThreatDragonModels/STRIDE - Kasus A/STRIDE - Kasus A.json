@@ -1272,11 +1272,14 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
-                "sourceMarker": "",
+                "sourceMarker": {
+                  "name": ""
+                },
                 "strokeDasharray": null
               }
             },
@@ -1299,12 +1302,12 @@
               "threats": [
                 {
                   "id": "6ec6d636-a500-4f59-b3a8-43188d56b16b",
-                  "title": "Mahasiswa memanggil endpoint buka/tutup sesi milik dosen",
+                  "title": "Dosen non-pengampu membuka/menutup sesi kelas lain",
                   "status": "Open",
                   "severity": "High",
                   "type": "Elevation of Privilege",
-                  "description": "Skenario: Jika mahasiswa dapat mengirim request buka/tutup sesi (F4) langsung ke backend dan otorisasi hanya disembunyikan di antarmuka, maka ia dapat membuka sesi kelas atau menutup sesi dosen.\nDampak: Sesi presensi dikuasai pihak tidak berwenang; integritas presensi hilang.\nAsumsi: pembatasan peran sebagian hanya di UI.\nPenilaian: Kemungkinan 2 x Dampak 3 = 6 (High).",
-                  "mitigation": "RBAC deny-by-default di backend; baca peran dari token tepercaya di server; pastikan pemanggil adalah dosen pengampu kelas tersebut; uji akses antar-peran.",
+                  "description": "Skenario: Jika pengguna dengan token autentikasi dosen yang valid mengirim perintah buka/tutup sesi (F4) untuk kelas yang bukan miliknya, dan backend hanya memeriksa peran pada token tanpa memeriksa kepemilikan kelas, maka ia dapat membuka atau menutup sesi dosen lain.\nDampak: Sesi presensi dikuasai pihak tidak berwenang; integritas presensi hilang.\nAsumsi: backend membaca peran dari token dosen, tetapi belum memeriksa kepemilikan kelas/sesi.\nPenilaian: Kemungkinan 2 x Dampak 3 = 6 (High).",
+                  "mitigation": "RBAC deny-by-default di backend; baca peran dan identitas dosen dari token tepercaya di server; cocokkan ID dosen pada token dengan dosen pengampu kelas tersebut di Database Akademik; uji akses antar-peran.",
                   "modelType": "STRIDE",
                   "new": false,
                   "number": 6,
@@ -1314,7 +1317,12 @@
               "trustBoundaryIds": [
                 "fc74ace2-fa65-4822-a5cf-0821265e2127",
                 "d5c3cc80-f123-4ac0-886e-14be2fc74183"
-              ]
+              ],
+              "threatFrequency": {
+                "tampering": 0,
+                "informationDisclosure": 0,
+                "denialOfService": 0
+              }
             },
             "labels": [
               "F4 Perintah buka/tutup sesi + token autentikasi dosen"
@@ -1331,7 +1339,17 @@
                 "x": 560,
                 "y": 170
               }
-            ]
+            ],
+            "tools": {
+              "items": [
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead"
+              ],
+              "name": null
+            }
           },
           {
             "shape": "flow",
